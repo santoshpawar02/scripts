@@ -79,7 +79,7 @@ rm -f /$log_file
 
 exit_status_print() {
    if [ $1 -eq 0 ]; then
-    echo -e "\e[32m >> SUCCESS\e[om" 
+    echo -e "\e[32m >> SUCCESS\e[0m" 
    else
     echo -e "\e[31m >> FAILURE\e[0m"
     lno=$(cat -n /tmp/roboshop.log | grep '#################################################################' | tail -n 2 | head -n 1 | awk '{print $1}')
