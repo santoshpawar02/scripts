@@ -1,17 +1,35 @@
-dnf module disable nginx -y
-dnf module enable nginx:1.24 -y
-dnf install nginx -y
+source common.sh
 
-cp -r nginx.conf /etc/nginx/nginx.conf 
+print_head Disable default nginx
+dnf module disable nginx -y &>>$log_file
+exit_status_print $?
 
-systemctl enable nginx 
-systemctl start nginx 
+print_head Enable Nginx 24v 
+dnf module enable nginx:1.24 -y &>>$log_file
+exit_status_print $?
 
-rm -rf /usr/share/nginx/html/* 
+print_head Install Nginx 
+dnf install nginx -y &>>$log_file
+exit_status_print $?
 
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
+print_head copy conf file 
+cp -r nginx.conf /etc/nginx/nginx.conf &>>$log_file 
+exit_status_print $?
 
-cd /usr/share/nginx/html 
-unzip /tmp/frontend.zip
+print_head clean up old file 
+rm -rf /usr/share/nginx/html/*  &>>$log_file
+exit_status_print $?
 
-systemctl restart nginx 
+print_head Download App content 
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$log_file
+exit_status_print $?
+
+print_head Extract app content 
+cd /usr/share/nginx/html  &>>$log_file
+unzip /tmp/frontend.zip &>>$log_file
+exit_status_print $?
+
+print_head start Nginx service 
+systemctl enable nginx &>>$log_file
+systemctl restart nginx  &>>$log_file
+exit_status_print $?
